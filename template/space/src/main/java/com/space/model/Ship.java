@@ -50,7 +50,7 @@ public class Ship {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if(name.length()> 0) this.name = name;
     }
 
     public String getPlanet() {
@@ -58,7 +58,7 @@ public class Ship {
     }
 
     public void setPlanet(String planet) {
-        this.planet = planet;
+        if(planet.length() > 0) this.planet = planet;
     }
 
     public ShipType getShipType() {
@@ -90,7 +90,7 @@ public class Ship {
     }
 
     public void setSpeed(Double speed) {
-        this.speed = speed;
+        if(speed > 0)this.speed = speed;
     }
 
     public Integer getCrewSize() {
@@ -98,7 +98,7 @@ public class Ship {
     }
 
     public void setCrewSize(Integer crewSize) {
-        this.crewSize = crewSize;
+        if(crewSize > 0) this.crewSize = crewSize;
     }
 
     public Double getRating() {
@@ -106,7 +106,7 @@ public class Ship {
     }
 
     public void setRating(Double rating) {
-        this.rating = rating;
+        if(rating >= 0)this.rating = rating;
     }
 
     public Ship() {
@@ -117,7 +117,10 @@ public class Ship {
         this.planet = planet;
         this.shipType = shipType;
         this.prodDate = prodDate;
-        this.isUsed = isUsed;
+        if (isUsed != null) {
+            this.isUsed = isUsed;}
+        else {
+            this.isUsed = false;}
         this.speed = speed;
         this.crewSize = crewSize;
         if(rating != null){
@@ -142,16 +145,16 @@ public class Ship {
         this.rating = (double)Math.round(80*this.speed /k /(3019 - (this.getProdDate().getYear()+1900) +1) * 100d)/ 100d;
     }
 
-    public Ship(String name, String planet, ShipType shipType, Date prodDate, Double speed, Integer crewSize) {
-        this.name = name;
-        this.planet = planet;
-        this.shipType = shipType;
-        this.prodDate = prodDate;
-        this.speed = speed;
-        this.crewSize = crewSize;
-        this.isUsed = false;
-        this.rating = (double)Math.round(80*this.speed /(3019 - (this.getProdDate().getYear()+1900) +1) * 100d) / 100d;
-    }
+//    public Ship(String name, String planet, ShipType shipType, Date prodDate, Double speed, Integer crewSize) {
+//        this.name = name;
+//        this.planet = planet;
+//        this.shipType = shipType;
+//        this.prodDate = prodDate;
+//        this.speed = speed;
+//        this.crewSize = crewSize;
+//        this.isUsed = false;
+//        this.rating = (double)Math.round(80*this.speed /(3019 - (this.getProdDate().getYear()+1900) +1) * 100d) / 100d;
+//    }
 
     @Override
     public String toString() {

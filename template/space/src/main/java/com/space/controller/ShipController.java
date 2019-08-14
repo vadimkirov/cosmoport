@@ -61,7 +61,7 @@ public class ShipController {
 
     @RequestMapping(value = "/ships/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Ship> findShip(@PathVariable("id") Long shipId){
-        if(shipId==null) {
+        if(shipId == null || shipId <= 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Ship ship = this.repository.getById(shipId);
@@ -72,97 +72,37 @@ public class ShipController {
         return new ResponseEntity<>(ship,HttpStatus.OK);
     }
 
-//    @PostMapping(value = "/ships")
-//    public @ResponseBody String create(@RequestBody Map<String, Object> args){
-//        return "";
-//    }
-////
-//
-//    @ResponseBody
-//    public ResponseEntity<Ship> create(@RequestBody Ship ship) {
-//        if(!service.isValidShip(ship))new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-////            Ship savedShip = repository.saveAndFlush(ship);
-//            Ship savedShip = service.addShip(ship);
-//            return new ResponseEntity<>(savedShip, HttpStatus.OK);
-//    }
-//
-
-//    @RequestMapping(value = "/ships", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    public ResponseEntity<Ship> create(@RequestParam(name = "name") String name,
-//                                       @RequestParam(name = "planet")String planet,
-//                                       @RequestParam(name = "shipType") ShipType shipType,
-//                                       @RequestParam(name = "prodDate")Long prodDate,
-//                                       @RequestParam(name = "isUsed", required = false, defaultValue = "false") Boolean isUsed,
-//                                       @RequestParam(name = "speed") Double speed,
-//                                       @RequestParam(name = "crewSize") Integer crewSize
-//    ){
-//
-//        Ship ship = new Ship(name,planet,shipType,new Date(prodDate),isUsed,speed,crewSize);
-//        if(!this.service.isValidShip(ship))new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        Ship savedShip = service.addShip(ship);
-//        return new ResponseEntity<>(savedShip, HttpStatus.OK);
-//    }
-//
-
 
     @RequestMapping(value = "/ships", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Ship> create(@RequestBody @Validated Ship ship) {
-        if(!this.service.isValidShip(ship))new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(!this.service.isValidShip(ship))return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         Ship savedShip = service.addShip(ship);
         return new ResponseEntity<>(savedShip, HttpStatus.OK);
     }
 
+
+
     @RequestMapping(value = "/ships/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Ship> update(@PathVariable("id") @Validated Long shipId,
-                                       @RequestParam(name = "name", required = false) String name,
-                                       @RequestParam(name = "planet", required = false)String planet,
-                                       @RequestParam(name = "shipType", required = false) ShipType shipType,
-                                       @RequestParam(name = "prodDate", required = false)Long prodDate,
-                                       @RequestParam(name = "isUsed", required = false) Boolean isUsed,
-                                       @RequestParam(name = "speed", required = false) Double speed,
-                                       @RequestParam(name = "crewSize", required = false) Integer crewSize
+                                       @RequestBody Ship shipNewData
     ){
-        if(shipId == null) {
+        if(shipId == null || shipId <= 0 || !this.service.testData(shipNewData) ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Ship ship = this.repository.getById(shipId);
         if(ship == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        repository.save(ship);
-//        this.service.updateShip(shipId);
+
+        this.service.updateShip(ship, shipNewData);
         return new ResponseEntity<>(ship,HttpStatus.OK);
     }
 
 
-//    @RequestMapping(value = "/ships/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    public ResponseEntity<Ship> update(@RequestParam ("id") Long shipId,
-//                                       @RequestParam(name = "name", required = false) String name,
-//                                       @RequestParam(name = "planet", required = false)String planet,
-//                                       @RequestParam(name = "shipType", required = false) ShipType shipType,
-//                                       @RequestParam(name = "prodDate", required = false)Long prodDate,
-//                                       @RequestParam(name = "isUsed", required = false) Boolean isUsed,
-//                                       @RequestParam(name = "speed", required = false) Double speed,
-//                                       @RequestParam(name = "crewSize", required = false) Integer crewSize
-//                                       ){
-//
-//        if(shipId == null) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//        Ship updateShip = this.repository.getById(shipId);
-//        if(updateShip == null){
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//
-//        this.service.updateShip(updateShip);
-//        return new ResponseEntity<>(updateShip,HttpStatus.OK);
-//    }
-
-
     @RequestMapping(value = "/ships/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Ship> delete(@PathVariable("id") @Validated Long shipId){
-        if(shipId == null) {
+        if(shipId == null || shipId <= 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Ship ship = this.repository.getById(shipId);

@@ -27,16 +27,16 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
-    public void updateShip(Ship ship) {
-//        Ship updateShip = this.repository.getById(ship.getId());
-//        updateShip.setName(ship.name);
-//        updateShip.setPlanet(planet);
-//        updateShip.setShipType(shipType);
-//        updateShip.setProdDate(prodDate);
-//        updateShip.setUsed(isUsed);
-//        updateShip.setSpeed(speed);
-//        updateShip.setCrewSize(crewSize);
-//        ship.setRating(80*ship.getSpeed() /(3019 - ship.getProdDate().getYear() +1));
+    public void updateShip(Ship ship, Ship shipNewData) {
+        if(shipNewData.getName() != null) ship.setName(shipNewData.getName());
+        if(shipNewData.getPlanet() != null) ship.setPlanet(shipNewData.getPlanet());
+        if(shipNewData.getShipType() != null) ship.setShipType(shipNewData.getShipType());
+        if(shipNewData.getProdDate() != null) ship.setProdDate(shipNewData.getProdDate().getTime());
+        if(shipNewData.getUsed() != null) ship.setUsed(shipNewData.getUsed());
+        if(shipNewData.getSpeed() != null) ship.setSpeed(shipNewData.getSpeed());
+        if(shipNewData.getCrewSize() != null) ship.setCrewSize(shipNewData.getCrewSize());
+        int k =  (ship.getUsed())? 2 : 1;
+        ship.setRating((double)Math.round(80*ship.getSpeed() /k /(3019 - (ship.getProdDate().getYear()+1900) +1) * 100d)/ 100d);
         repository.save(ship);
     }
 
@@ -47,12 +47,44 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     public Boolean isValidShip(Ship ship) {
-        if(ship.getName().length()>50 || ship.getName().isEmpty())return false;
-        if(ship.getPlanet().length() > 50 || ship.getPlanet().isEmpty()) return false;
+        if(ship.getName() == null ||
+                ship.getName().length()> 50
+                || ship.getName().isEmpty())return false;
+
+        if(ship.getCrewSize() == null ||
+                ship.getCrewSize() < 1 ||
+                ship.getCrewSize() > 9999
+        ) return false;
+
+        if((ship.getProdDate().getYear() + 1900) < 2800 ||
+                (ship.getProdDate().getYear() +1900) > 3019
+        )return false;
+
+        if(ship.getPlanet() == null ||
+                ship.getPlanet().length()> 50 ||
+                ship.getPlanet().isEmpty()) return false;
+
         if(ship.getShipType().getClass() != ShipType.class) return false;
-        if(ship.getProdDate().getYear()< 2800 || ship.getProdDate().getYear()>3019)return false;
-        if(ship.getSpeed() < 0.01 || ship.getSpeed()>0.99) return false;
-        if(ship.getCrewSize()<1 || ship.getCrewSize()>9999) return false;
+
+
+        if(ship.getSpeed() == null ||
+                ship.getSpeed() < 0.01 ||
+                ship.getSpeed()> 0.99
+                ) return false;
+
         return true;
     }
+
+    @Override
+    public boolean testData(Ship ship) {
+        if(ship.getName()!= null && ship.getName().isEmpty() ) return false;
+        if(ship.getCrewSize() != null && (ship.getCrewSize() < 1 ||
+                ship.getCrewSize() > 9999)) return false;
+        if(ship.getProdDate() != null &&((ship.getProdDate().getYear() + 1900) < 2800 ||
+                (ship.getProdDate().getYear() +1900) > 3019
+        ))return false;
+
+        return true;
+    }
+
 }
