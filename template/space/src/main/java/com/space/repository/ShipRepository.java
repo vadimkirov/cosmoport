@@ -12,6 +12,13 @@ public interface ShipRepository extends JpaRepository<Ship, Long> {
     @Transactional(timeout = 10)
     List<Ship> findAll();
 
+    List<Ship> findAllByNameIsContainingIgnoreCase(String string);
+    List<Ship> findALLByOrderByIdAsc();
+    List<Ship> findALLByOrderBySpeedAsc();
+    List<Ship> findALLByOrderByRatingAsc();
+    List<Ship> findALLByOrderByProdDateAsc();
+
+
     Ship getById(Long shipId);
 
     void deleteById(Long shipId);

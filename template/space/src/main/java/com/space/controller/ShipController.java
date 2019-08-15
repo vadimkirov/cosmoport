@@ -55,8 +55,8 @@ public class ShipController {
             @RequestParam(name = "pageSize", required = false, defaultValue = "3") Integer pageSize,
             Model model){
 
-
-        return getListWithFilters(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, order, pageNumber, pageSize);
+            List<Ship> ships = getListWithFilters(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, order, pageNumber, pageSize);
+        return ships;
     }
 
     @RequestMapping(value = "/ships/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -143,7 +143,26 @@ public class ShipController {
 //
     private List<Ship> getListWithFilters(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpeeds, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating, ShipOrder order, Integer pageNumber, Integer pageSize) {
         int pagerEndShip =  (pageNumber*pageSize+pageSize)> repository.findAll().size() ? repository.findAll().size(): pageNumber*pageSize+pageSize;
-        List<Ship> showShips = repository.findAll().subList(pageNumber*pageSize,pagerEndShip);
+//        List<Ship> showShips = repository.findAll().subList(pageNumber*pageSize,pagerEndShip);
+        List<Ship> showShips;
+        switch (order){
+            case ID: showShips = repository.findALLByOrderByIdAsc().subList(pageNumber*pageSize,pagerEndShip);
+                break;
+            case SPEED: showShips = repository.findALLByOrderBySpeedAsc().subList(pageNumber*pageSize,pagerEndShip);
+                break;
+            case DATE: showShips = repository.findALLByOrderByProdDateAsc().subList(pageNumber*pageSize,pagerEndShip);
+                break;
+            case RATING: showShips = repository.findALLByOrderByRatingAsc().subList(pageNumber*pageSize,pagerEndShip);
+             break;
+
+             default: showShips = repository.findAll().subList(pageNumber*pageSize,pagerEndShip);
+        }
+
+//        List<Ship> ships;
+//        if(name != null){
+//            ships = repository.findAllByNameIsContainingIgnoreCase(name);
+//            return ships;
+//        }
 
         return showShips;
     }
