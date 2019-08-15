@@ -16,7 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -25,14 +25,11 @@ public class ShipController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShipController.class);
 
-
     @Autowired
     private ShipRepository repository;
 
     @Autowired
     private ShipService service;
-
-
 
 
     @RequestMapping(value = "/ships",method = RequestMethod.GET)
@@ -55,8 +52,7 @@ public class ShipController {
             @RequestParam(name = "pageSize", required = false, defaultValue = "3") Integer pageSize,
             Model model){
 
-            List<Ship> ships = getListWithFilters(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, order, pageNumber, pageSize);
-        return ships;
+        return getListWithFiltersAndPage(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, order, pageNumber, pageSize);
     }
 
     @RequestMapping(value = "/ships/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -112,10 +108,7 @@ public class ShipController {
         this.repository.deleteById(shipId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-//
-//
-//
-//
+
     @GetMapping(value = "/ships/count")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Integer count(
@@ -133,38 +126,113 @@ public class ShipController {
             @RequestParam(name = "maxRating", required = false) Double maxRating,
             Model model){
 
-        Integer countShips = repository.findAll().size();
-        return countShips;
-    }
-//
-//
-//
-//
-//
-    private List<Ship> getListWithFilters(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpeeds, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating, ShipOrder order, Integer pageNumber, Integer pageSize) {
-        int pagerEndShip =  (pageNumber*pageSize+pageSize)> repository.findAll().size() ? repository.findAll().size(): pageNumber*pageSize+pageSize;
-//        List<Ship> showShips = repository.findAll().subList(pageNumber*pageSize,pagerEndShip);
-        List<Ship> showShips;
-        switch (order){
-            case ID: showShips = repository.findALLByOrderByIdAsc().subList(pageNumber*pageSize,pagerEndShip);
-                break;
-            case SPEED: showShips = repository.findALLByOrderBySpeedAsc().subList(pageNumber*pageSize,pagerEndShip);
-                break;
-            case DATE: showShips = repository.findALLByOrderByProdDateAsc().subList(pageNumber*pageSize,pagerEndShip);
-                break;
-            case RATING: showShips = repository.findALLByOrderByRatingAsc().subList(pageNumber*pageSize,pagerEndShip);
-             break;
 
-             default: showShips = repository.findAll().subList(pageNumber*pageSize,pagerEndShip);
+        List<Ship> ships = getListWithFilters(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating);
+        return ships.size();
+    }
+
+    private List<Ship> getListWithFilters(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpeeds, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating) {
+        List<Ship> showShips = repository.findAll();
+
+        shipFilterFunction(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, showShips);
+        return showShips;
+    }
+
+    private void shipFilterFunction(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpeeds, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating, List<Ship> showShips) {
+        Iterator<Ship> shipIterator = showShips.listIterator();
+
+        while (shipIterator.hasNext()) {
+            Ship ship = shipIterator.next();
+            if(name != null && !ship.getName().contains(name)){
+                shipIterator.remove();
+                continue;
+            }
+            if (planet != null && !ship.getPlanet().contains(planet)){
+                shipIterator.remove();
+                continue;
+            }
+            if (shipType != null && ship.getShipType()!= shipType){
+                shipIterator.remove();
+                continue;
+            }
+            if (after != null && ship.getProdDate().getTime()< after){
+                shipIterator.remove();
+                continue;
+            }
+            if (before != null && ship.getProdDate().getTime() > before){
+                shipIterator.remove();
+                continue;
+            }
+            if (isUsed != null && ship.getUsed() != isUsed){
+                shipIterator.remove();
+                continue;
+            }
+            if (minSpeeds != null && ship.getSpeed()< minSpeeds){
+                shipIterator.remove();
+                continue;
+            }
+            if (maxSpeed != null && ship.getSpeed() > maxSpeed){
+                shipIterator.remove();
+                continue;
+            }
+            if (minCrewSize != null && ship.getCrewSize() < minCrewSize){
+                shipIterator.remove();
+                continue;
+            }
+            if (maxCrewSize != null && ship.getCrewSize() > maxCrewSize){
+                shipIterator.remove();
+                continue;
+            }
+            if (minRating != null && ship.getRating() < minRating){
+                shipIterator.remove();
+                continue;
+            }
+            if (maxRating != null && ship.getRating() > maxRating){
+                shipIterator.remove();
+            }
+
         }
 
-//        List<Ship> ships;
-//        if(name != null){
-//            ships = repository.findAllByNameIsContainingIgnoreCase(name);
-//            return ships;
-//        }
+    }
 
-        return showShips;
+    private List<Ship> getListWithFiltersAndPage(String name, String planet, ShipType shipType,
+                                          Long after, Long before, Boolean isUsed,
+                                          Double minSpeeds, Double maxSpeed,
+                                          Integer minCrewSize, Integer maxCrewSize,
+                                          Double minRating, Double maxRating,
+                                          ShipOrder order, Integer pageNumber, Integer pageSize) {
+
+        List<Ship> showShips;
+        switch (order){
+            case ID: showShips = repository.findALLByOrderByIdAsc();
+                break;
+            case SPEED: showShips = repository.findALLByOrderBySpeedAsc();
+                break;
+            case DATE: showShips = repository.findALLByOrderByProdDateAsc();
+                break;
+            case RATING: showShips = repository.findALLByOrderByRatingAsc();
+             break;
+
+             default: showShips = repository.findAll();
+        }
+
+        shipFilterFunction(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, showShips);
+        if (order == ShipOrder.SPEED){
+            showShips.sort((o1, o2) -> {
+                if (o1.getSpeed().equals(o2.getSpeed())){
+                    if(o1.getId() > o2.getId())return 1;
+                    else return -1;
+                }
+                else return 0;
+
+
+
+            });
+        }
+
+        int pagerEndShip =  (pageNumber*pageSize+pageSize)> showShips.size() ? showShips.size(): pageNumber*pageSize+pageSize;
+        int pageStartShip =  (pageNumber*pageSize) >  showShips.size()? ( showShips.size()< pageSize ? 0: pagerEndShip-pageSize) : pageNumber*pageSize;
+        return showShips.subList(pageStartShip,pagerEndShip);
     }
 
 
