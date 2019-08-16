@@ -17,7 +17,6 @@ public interface ShipRepository extends JpaRepository<Ship, Long> {
     List<Ship> findALLByOrderByRatingAsc();
     List<Ship> findALLByOrderByProdDateAsc();
 
-
     Ship getById(Long shipId);
 
     void deleteById(Long shipId);

@@ -4,6 +4,7 @@ package com.space.model;
 import javax.persistence.*;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.Objects;
 
 
 @Entity
@@ -129,45 +130,28 @@ public class Ship {
             int k =  (this.isUsed)? 2 : 1;
             this.rating = (double)Math.round(80*this.speed /k /(3019 - (this.getProdDate().getYear()+1900) +1) * 100d) / 100d;
         }
-
-
     }
-
-    public Ship(String name, String planet, ShipType shipType, Date prodDate, Boolean isUsed, Double speed, Integer crewSize) {
-        this.name = name;
-        this.planet = planet;
-        this.shipType = shipType;
-        this.prodDate = prodDate;
-        this.isUsed = isUsed;
-        this.speed = speed;
-        this.crewSize = crewSize;
-        int k =  (this.isUsed)? 2 : 1;
-        this.rating = (double)Math.round(80*this.speed /k /(3019 - (this.getProdDate().getYear()+1900) +1) * 100d)/ 100d;
-    }
-
-//    public Ship(String name, String planet, ShipType shipType, Date prodDate, Double speed, Integer crewSize) {
-//        this.name = name;
-//        this.planet = planet;
-//        this.shipType = shipType;
-//        this.prodDate = prodDate;
-//        this.speed = speed;
-//        this.crewSize = crewSize;
-//        this.isUsed = false;
-//        this.rating = (double)Math.round(80*this.speed /(3019 - (this.getProdDate().getYear()+1900) +1) * 100d) / 100d;
-//    }
 
     @Override
-    public String toString() {
-        return "Ship{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", planet='" + planet + '\'' +
-                ", shipType=" + shipType +
-                ", prodDate=" + prodDate +
-                ", isUsed=" + isUsed +
-                ", speed=" + speed +
-                ", crewSize=" + crewSize +
-                ", rating=" + rating +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Ship ship = (Ship) o;
+
+        if (id != ship.id) return false;
+        if (!Objects.equals(name, ship.name)) return false;
+        if (!Objects.equals(planet, ship.planet)) return false;
+        if (shipType != ship.shipType) return false;
+        if (!Objects.equals(prodDate, ship.prodDate)) return false;
+        if (!Objects.equals(isUsed, ship.isUsed)) return false;
+        if (!Objects.equals(speed, ship.speed)) return false;
+        if (!Objects.equals(crewSize, ship.crewSize)) return false;
+        return Objects.equals(rating, ship.rating);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, planet, shipType, prodDate, isUsed, speed, crewSize, rating);
     }
 }

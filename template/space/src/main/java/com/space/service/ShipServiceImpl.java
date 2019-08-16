@@ -10,8 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ShipServiceImpl implements ShipService {
 
+    private final ShipRepository repository;
+
     @Autowired
-    private ShipRepository repository;
+    public ShipServiceImpl(ShipRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Ship addShip(Ship ship) {
@@ -41,11 +45,6 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
-    public Ship getShipById(long id) {
-        return repository.getById(id);
-    }
-
-    @Override
     public Boolean isValidShip(Ship ship) {
         if(ship.getName() == null ||
                 ship.getName().length()> 50
@@ -65,7 +64,6 @@ public class ShipServiceImpl implements ShipService {
                 ship.getPlanet().isEmpty()) return false;
 
         if(ship.getShipType().getClass() != ShipType.class) return false;
-
 
         if(ship.getSpeed() == null ||
                 ship.getSpeed() < 0.01 ||
