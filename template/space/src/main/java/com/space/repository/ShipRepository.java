@@ -8,10 +8,6 @@ import java.util.List;
 
 public interface ShipRepository extends JpaRepository<Ship, Long> {
 
-    @Override
-    @Transactional(timeout = 10)
-    List<Ship> findAll();
-
     List<Ship> findALLByOrderByIdAsc();
     List<Ship> findALLByOrderBySpeedAsc();
     List<Ship> findALLByOrderByRatingAsc();
