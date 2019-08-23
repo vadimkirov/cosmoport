@@ -11,14 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Iterator;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/rest")
 public class ShipController {
 
@@ -36,8 +35,8 @@ public class ShipController {
 
     // Get ships list
     @RequestMapping(value = "/ships",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody
-    List<Ship> getShipList(
+
+    public List<Ship> getShipList(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "planet", required = false)String planet,
             @RequestParam(name = "shipType", required = false) ShipType shipType,
@@ -60,7 +59,7 @@ public class ShipController {
     // Get ships count
     @RequestMapping(value = "/ships/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody Integer count(
+    public Integer count(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "planet", required = false)String planet,
             @RequestParam(name = "shipType", required = false)ShipType shipType,
