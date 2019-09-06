@@ -3,7 +3,6 @@ package com.space.controller;
 
 import com.space.model.Ship;
 import com.space.model.ShipType;
-import com.space.repository.ShipRepository;
 import com.space.service.ShipService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
