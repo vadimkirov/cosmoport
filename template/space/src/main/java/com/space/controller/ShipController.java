@@ -23,13 +23,10 @@ public class ShipController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShipController.class);
 
-    private final ShipRepository repository;
-
     private final ShipService service;
 
     @Autowired
-    public ShipController(ShipRepository repository, ShipService service) {
-        this.repository = repository;
+    public ShipController( ShipService service) {
         this.service = service;
     }
 
@@ -95,7 +92,7 @@ public class ShipController {
         if(shipId == null || shipId <= 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Ship ship = this.repository.getById(shipId);
+        Ship ship = service.getById(shipId);
         if(ship == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -111,7 +108,7 @@ public class ShipController {
         if(shipId == null || shipId <= 0 || !this.service.testData(shipNewData) ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Ship ship = this.repository.getById(shipId);
+        Ship ship = service.getById(shipId);
         if(ship == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -126,17 +123,17 @@ public class ShipController {
         if(shipId == null || shipId <= 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Ship ship = this.repository.getById(shipId);
+        Ship ship = service.getById(shipId);
         if(ship == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        this.repository.deleteById(shipId);
+        service.deleteById(shipId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     private List<Ship> getListWithFilters(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpeeds, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating) {
-        List<Ship> showShips = repository.findAll();
+        List<Ship> showShips = service.findAll();
 
         shipFilterFunction(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, showShips);
         return showShips;
@@ -206,16 +203,16 @@ public class ShipController {
 
         List<Ship> showShips;
         switch (order){
-            case ID: showShips = repository.findALLByOrderByIdAsc();
+            case ID: showShips = service.findALLByOrderByIdAsc();
                 break;
-            case SPEED: showShips = repository.findALLByOrderBySpeedAsc();
+            case SPEED: showShips = service.findALLByOrderBySpeedAsc();
                 break;
-            case DATE: showShips = repository.findALLByOrderByProdDateAsc();
+            case DATE: showShips = service.findALLByOrderByProdDateAsc();
                 break;
-            case RATING: showShips = repository.findALLByOrderByRatingAsc();
+            case RATING: showShips = service.findALLByOrderByRatingAsc();
                 break;
 
-            default: showShips = repository.findAll();
+            default: showShips = service.findAll();
         }
 
         shipFilterFunction(name, planet, shipType, after, before, isUsed, minSpeeds, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, showShips);

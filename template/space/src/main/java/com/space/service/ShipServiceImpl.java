@@ -7,6 +7,8 @@ import com.space.repository.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ShipServiceImpl implements ShipService {
 
@@ -83,6 +85,41 @@ public class ShipServiceImpl implements ShipService {
         ))return false;
 
         return true;
+    }
+
+    @Override
+    public Ship getById(Long shipId) {
+        return repository.getById(shipId);
+    }
+
+    @Override
+    public void deleteById(Long shipId) {
+        repository.deleteById(shipId);
+    }
+
+    @Override
+    public List<Ship> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public List<Ship> findALLByOrderByIdAsc() {
+        return repository.findALLByOrderByIdAsc();
+    }
+
+    @Override
+    public List<Ship> findALLByOrderBySpeedAsc() {
+        return repository.findALLByOrderBySpeedAsc();
+    }
+
+    @Override
+    public List<Ship> findALLByOrderByProdDateAsc() {
+        return repository.findALLByOrderByProdDateAsc();
+    }
+
+    @Override
+    public List<Ship> findALLByOrderByRatingAsc() {
+        return repository.findALLByOrderByRatingAsc();
     }
 
 }
