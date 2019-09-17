@@ -31,7 +31,6 @@ public class ShipController {
 
     // Get ships list
     @RequestMapping(value = "/ships",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-
     public List<Ship> getShipList(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "planet", required = false)String planet,
@@ -78,7 +77,7 @@ public class ShipController {
     //Create ship
     @RequestMapping(value = "/ships", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Ship> create(@RequestBody @Validated Ship ship) {
-        if(!this.service.isValidShip(ship))return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(!service.isValidShip(ship))return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         Ship savedShip = service.addShip(ship);
         return new ResponseEntity<>(savedShip, HttpStatus.OK);
@@ -104,7 +103,7 @@ public class ShipController {
     public ResponseEntity<Ship> update(@PathVariable("id") @Validated Long shipId,
                                        @RequestBody Ship shipNewData
     ){
-        if(shipId == null || shipId <= 0 || !this.service.testData(shipNewData) ) {
+        if(shipId == null || shipId <= 0 || !service.testData(shipNewData) ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Ship ship = service.getById(shipId);
@@ -112,7 +111,7 @@ public class ShipController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        this.service.updateShip(ship, shipNewData);
+        service.updateShip(ship, shipNewData);
         return new ResponseEntity<>(ship,HttpStatus.OK);
     }
 
